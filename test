@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+	<script src="../yugyud.html/js/jquery.min.js"></script>
+</head>
+<body>
+<ul id="nav">
+    <li><a href="ajax-pushState.html/user">user</a></li>
+    <li><a href="ajax-pushState.html/detail">detail</a></li>
+</ul>
+ 
+<div id="container">
+ 
+</div>
+ 
+</body>
+
+
+<script type="text/javascript">
+	 var ul = document.querySelector('#nav'),
+	 container = document.querySelector('#container');
+	 
+	 
+	     //设置页面内容方法
+	     var setContainer = function (url) {
+	         //ajax请求页面template
+			$.ajax({
+				url: '../yugyud.html/sever/seo.js',
+				type: 'get',
+				data: {},
+				dataType: 'jsonp',
+				jsonp: "callback",
+				jsonpCallback:"successCallback",
+			}).then(function(res) {
+				console.log(res);
+				//把从json获取的数据赋值给数组
+				container.innerHTML = 'ajax返回的页面' + url;										
+			}).fail(function() {
+				console.log('失败');
+			})
+			 
+	         
+	  
+	     };
+	     ul.addEventListener('click', function (e) {
+	         var target = e.target;
+
+			
+	         if (target.nodeName !== 'A') {
+	             return;
+	         };
+			 
+			 target=String(target);						 			 			 
+			var  url = target.split('/').pop();
+			console.log(url);
+	         // var url = target.hash.replace('a.html', ''); 
+			
+			 // alert(url);
+			
+	         history.pushState(null, null, url+".html"); // 当A标签触发点击时，改变浏览器url
+	         setContainer(url);
+	         e.preventDefault();
+	         e.stopPropagation();
+	 });
+  //当用户使用前进/后退按钮时候
+    window.addEventListener('popstate', function (e) {
+        setContainer(e.state);
+    })
+ 
+// 之后还需要给搜索引擎写要让他抓取的内容就是href的url地址对应的内容，是服务器路由设置吗？所有url请求
+//因为不使用#号结构，每个URL都是一个不同的请求。所以，要求服务器端对所有这些请求，都返回如下结构的网页，防止出现404错误。
+
+// 　　<html>
+// 　　　　<body>
+// 　　　　　　<section id='container'></section>
+// 　　　　　　<noscript>
+// 　　　　　　　　... ...
+//  　　　　　　</noscript>
+// 　　　　</body>
+// 　　</html>
+
+// 因为不适用#结构，所以每一个url都是一个请求，那么，在服务端我们需要设置这些请求返回的都是这样的页面才行
+// <html>
+ 
+// <body>
+// <ul id="nav">
+//     <li><a href="#user">user</a></li>
+//     <li><a href="#detail">detail</a></li>
+// </ul>
+ 
+// <div id="container">
+ 
+// </div>
+ 
+// </body>
+
+
+
+ 
+</script>
+
+</html>
+
+
